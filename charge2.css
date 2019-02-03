@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #212121;
+}
+
+h1 {
+    text-align: center;
+}
+
+#screen {
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid black;
+    display: block;
+}
