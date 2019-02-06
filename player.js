@@ -7,21 +7,37 @@ function Player() {
 }
 
 Player.prototype.walkDown = function() {
-    this.y += this.walkYVel;
+    if (!this.hitbox.isBottomColliding) {
+        this.y += this.walkYVel;
+        this.moveMade();
+    }
 }
 
 Player.prototype.walkUp = function() {
-    this.y -= this.walkYVel;
+    if (!this.hitbox.isTopColliding) {
+        this.y -= this.walkYVel;
+        this.moveMade();
+    }
 }
 
 Player.prototype.walkLeft = function() {
-    this.x -= this.walkXVel;
+    if (!this.hitbox.isLeftColliding) {
+        this.x -= this.walkXVel;
+        this.moveMade();
+    }
 }
 
 Player.prototype.walkRight = function() {
-    this.x += this.walkXVel;
+    if (!this.hitbox.isRightColliding) {
+        this.x += this.walkXVel;
+        this.moveMade();
+    }
 }
 
 Player.prototype.draw = function() {
     drawCircle(this.x, this.y, 10);
+}
+
+Player.prototype.moveMade = function() {
+    collisionDetect();
 }

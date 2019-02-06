@@ -1,7 +1,8 @@
 var g = {
     context: null,
     player: new Player(),
-    entities: []
+    entities: [],
+    intersections: []
 };
 
 var SCREEN_HEIGHT = 500;
@@ -64,6 +65,8 @@ function clearScreen() {
 }
 
 function collisionDetect() {
+    g.intersections = [];
+    g.player.hitbox.resetCollidingSides();
     for (var i = 0; i < g.entities.length; i++) {
         var currentEntity = g.entities[i];
         for (var j = 0; j < g.entities.length; j++) {
@@ -72,8 +75,11 @@ function collisionDetect() {
             if (currentEntity !== otherEntity) {
                 // Draw the intersection
                 var intersection = currentEntity.hitbox.intersect(otherEntity.hitbox);
+                if (currentEntity === g.player) {
+                    g.player.hitbox.updateColliding(otherEntity.hitbox, intersection);
+                }
                 if (intersection !== null) {
-                    intersection.draw();
+                    g.intersections.push(intersection);
                 }
             }
         }
@@ -91,7 +97,9 @@ function draw() {
     for (var i = 0; i < g.entities.length; i++) {
         g.entities[i].hitbox.draw();
     }
-    collisionDetect();
+    for (var i = 0; i < g.intersections.length; i++) {
+        g.intersections[i].draw();
+    }
     drawRect(100, 20, 40, 50);
 }
 

@@ -17,6 +17,14 @@ function Hitbox(owner, xOffset, yOffset, xOffset2, yOffset2) {
     this.yOffset2 = yOffset2;
     console.assert(this.xOffset < this.xOffset2, "xOffset2 can't be less than xOffset");
     console.assert(this.yOffset < this.yOffset2, "yOffset2 can't be less than yOffset");
+    this.resetCollidingSides();
+}
+
+Hitbox.prototype.resetCollidingSides = function() {
+    this.isLeftColliding = false;
+    this.isRightColliding = false;
+    this.isTopColliding = false;
+    this.isBottomColliding = false;
 }
 
 Hitbox.prototype.getX = function() {
@@ -43,6 +51,13 @@ Hitbox.prototype.getHeight = function() {
     return this.getY2() - this.getY();
 }
 
+Hitbox.prototype.getCenter = function() {
+    return {
+        x: this.getX() + this.getWidth() / 2,
+        y: this.getY() + this.getHeight() / 2
+    };
+}
+
 Hitbox.prototype.draw = function() {
     drawGenericRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), "red", 1);
 }
@@ -56,5 +71,23 @@ Hitbox.prototype.intersect = function(otherHitbox) {
         return null;
     } else {
         return new Rectangle(x, y, x2 - x, y2 - y);
+    }
+}
+
+Hitbox.prototype.updateColliding = function(otherHitbox, intersection) {
+    if (intersection !== null) {
+        if (intersection.height > intersection.width) {
+            if (this.getCenter().x < otherHitbox.getCenter().x) {
+                this.isRightColliding = true;
+            } else {
+                this.isLeftColliding = true;
+            }
+        } else {
+            if (this.getCenter().y < otherHitbox.getCenter().y) {
+                this.isBottomColliding = true;
+            } else {
+                this.isTopColliding = true;
+            }
+        }
     }
 }
