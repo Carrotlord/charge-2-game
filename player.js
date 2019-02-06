@@ -3,6 +3,7 @@ function Player() {
     this.y = 200;
     this.walkXVel = 5;
     this.walkYVel = 5;
+    this.hitbox = new Hitbox(this, -10, -15, 10, 15);
 }
 
 Player.prototype.walkDown = function() {
