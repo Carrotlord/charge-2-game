@@ -47,3 +47,7 @@ Weight.prototype.draw = function() {
 Weight.prototype.xAccelerate = function(accelAmount) {
     this.xVel += accelAmount;
 }
+
+Weight.prototype.yAccelerate = function(accelAmount) {
+    this.yVel += accelAmount;
+}

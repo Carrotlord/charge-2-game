@@ -82,8 +82,12 @@ function coulombsLawAcceleration(entity, other) {
     var force = (COULOMBS_CONSTANT * entity.charge * other.charge) /
                 squaredDistanceBetween(entity, other);
     var accelMagnitude = force / entity.mass;
-    var accelSign = entity.getCenter().x < other.getCenter().x ? -1 : 1;
-    return accelSign * accelMagnitude;
+    var accelVector = convertPointsToVector(
+        other.getCenter().x, other.getCenter().y,
+        entity.getCenter().x, entity.getCenter().y
+    );
+    accelVector.setMagnitude(accelMagnitude);
+    return accelVector;
 }
 
 function squaredDistanceBetween(entity, other) {
@@ -124,8 +128,9 @@ function applyCoulombsLaw() {
     pairwiseAction(function(currentEntity, otherEntity) {
         if (!isUnaffectedByCharge(currentEntity) &&
             !isUnaffectedByCharge(otherEntity)) {
-            var xAccelAmount = coulombsLawAcceleration(currentEntity, otherEntity);
-            currentEntity.xAccelerate(xAccelAmount);
+            var accelVector = coulombsLawAcceleration(currentEntity, otherEntity);
+            currentEntity.xAccelerate(accelVector.xComponent);
+            currentEntity.yAccelerate(accelVector.yComponent);
         }
     });
 }
@@ -178,6 +183,30 @@ function testEntities(whichTest) {
         case "2-strong-opposites":
             g.entities.push(new Weight(1, 10, 200, 200));
             g.entities.push(new Weight(1, -10, 250, 200));
+            break;
+        case "4-positives":
+            g.entities.push(new Weight(1, 1, 200, 200));
+            g.entities.push(new Weight(1, 1, 250, 200));
+            g.entities.push(new Weight(1, 1, 200, 260));
+            g.entities.push(new Weight(1, 1, 250, 260));
+            break;
+        case "4-negatives":
+            g.entities.push(new Weight(1, -1, 200, 200));
+            g.entities.push(new Weight(1, -1, 250, 200));
+            g.entities.push(new Weight(1, -1, 200, 260));
+            g.entities.push(new Weight(1, -1, 250, 260));
+            break;
+        case "4-mixed":
+            g.entities.push(new Weight(1, 1, 200, 200));
+            g.entities.push(new Weight(1, -1, 250, 200));
+            g.entities.push(new Weight(1, -1, 200, 260));
+            g.entities.push(new Weight(1, 1, 250, 260));
+            break;
+        case "4-mixed-b":
+            g.entities.push(new Weight(1, 1, 200, 200));
+            g.entities.push(new Weight(1, 1, 250, 200));
+            g.entities.push(new Weight(1, -1, 200, 260));
+            g.entities.push(new Weight(1, 1, 250, 260));
             break;
     }
 }
