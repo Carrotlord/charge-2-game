@@ -14,6 +14,8 @@ var KEY_UP = 38;
 var KEY_LEFT = 37;
 var KEY_RIGHT = 39;
 
+var COULOMBS_CONSTANT = 1;
+
 function keyDownAction(event) {
     switch (event.keyCode) {
         case KEY_DOWN:
@@ -64,6 +66,29 @@ function clearScreen() {
     g.context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+function isUnaffectedByCharge(entity) {
+    return isUndefined(entity.charge) ||
+           isUndefined(entity.mass) ||
+           entity.charge === 0;
+}
+
+function coulombsLawAcceleration(entity, other) {
+    if (isUnaffectedByCharge(entity) || isUnaffectedByCharge(other)) {
+        return 0;
+    }
+    var force = (COULOMBS_CONSTANT * entity.charge * other.charge) /
+                squaredDistanceBetween(entity, other);
+    var accelMagnitude = force / entity.mass;
+    var accelSign = entity.getCenter().x < other.getCenter().x ? -1 : 1;
+    return accelSign * accelMagnitude;
+}
+
+function squaredDistanceBetween(entity, other) {
+    var deltaX = entity.getCenter().x - other.getCenter().x;
+    var deltaY = entity.getCenter().y - other.getCenter().y;
+    return deltaX * deltaX + deltaY * deltaY;
+}
+
 function collisionDetect() {
     g.intersections = [];
     g.player.hitbox.resetCollidingSides();
@@ -86,13 +111,34 @@ function collisionDetect() {
     }
 }
 
+function applyCoulombsLaw() {
+    for (var i = 0; i < g.entities.length; i++) {
+        var currentEntity = g.entities[i];
+        for (var j = 0; j < g.entities.length; j++) {
+            var otherEntity = g.entities[j];
+            if (currentEntity !== otherEntity) {
+                if (!isUnaffectedByCharge(currentEntity) &&
+                    !isUnaffectedByCharge(otherEntity)) {
+                    var xAccelAmount = coulombsLawAcceleration(currentEntity, otherEntity);
+                    currentEntity.xAccelerate(xAccelAmount);
+                }
+            }
+        }
+    }
+}
+
 function draw() {
     window.requestAnimationFrame(draw);
     clearScreen();
     drawRect(20, 20, 40, 50);
     for (var i = 0; i < g.entities.length; i++) {
-        g.entities[i].draw();
+        var currentEntity = g.entities[i];
+        currentEntity.draw();
+        if (!isUndefined(currentEntity.move)) {
+            currentEntity.move();
+        }
     }
+    applyCoulombsLaw();
     // All hitboxes should be drawn after entities are finished drawing
     for (var i = 0; i < g.entities.length; i++) {
         g.entities[i].hitbox.draw();
@@ -101,6 +147,35 @@ function draw() {
         g.intersections[i].draw();
     }
     drawRect(100, 20, 40, 50);
+}
+
+function testEntities(whichTest) {
+    switch (whichTest) {
+        case "2-positives":
+            g.entities.push(new Weight(1, 1, 200, 200));
+            g.entities.push(new Weight(1, 1, 250, 200));
+            break;
+        case "2-strong-positives":
+            g.entities.push(new Weight(1, 10, 200, 200));
+            g.entities.push(new Weight(1, 10, 250, 200));
+            break;
+        case "2-negatives":
+            g.entities.push(new Weight(1, -1, 200, 200));
+            g.entities.push(new Weight(1, -1, 250, 200));
+            break;
+        case "2-strong-negatives":
+            g.entities.push(new Weight(1, -10, 200, 200));
+            g.entities.push(new Weight(1, -10, 250, 200));
+            break;
+        case "2-opposites":
+            g.entities.push(new Weight(1, 1, 200, 200));
+            g.entities.push(new Weight(1, -1, 250, 200));
+            break;
+        case "2-strong-opposites":
+            g.entities.push(new Weight(1, 10, 200, 200));
+            g.entities.push(new Weight(1, -10, 250, 200));
+            break;
+    }
 }
 
 function setup() {

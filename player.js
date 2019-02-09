@@ -1,6 +1,6 @@
 function Player() {
-    this.x = 200;
-    this.y = 200;
+    this.x = 100;
+    this.y = 170;
     this.walkXVel = 5;
     this.walkYVel = 5;
     this.hitbox = new Hitbox(this, -10, -15, 10, 15);
