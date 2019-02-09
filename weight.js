@@ -18,8 +18,26 @@ Weight.prototype.getCenter = function() {
 }
 
 Weight.prototype.move = function() {
-    this.x += this.xVel;
-    this.y += this.yVel;
+    this.moveX();
+    this.moveY();
+}
+
+Weight.prototype.moveX = function() {
+    if ((this.xVel < 0 && !this.hitbox.isLeftColliding) ||
+        (this.xVel > 0 && !this.hitbox.isRightColliding)) {
+        this.x += this.xVel;
+    } else {
+        this.xVel = 0;
+    }
+}
+
+Weight.prototype.moveY = function() {
+    if ((this.yVel < 0 && !this.hitbox.isTopColliding) ||
+        (this.yVel > 0 && !this.hitbox.isBottomColliding)) {
+        this.y += this.yVel;
+    } else {
+        this.yVel = 0;
+    }
 }
 
 Weight.prototype.draw = function() {

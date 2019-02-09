@@ -17,6 +17,9 @@ var KEY_RIGHT = 39;
 var COULOMBS_CONSTANT = 1;
 
 function keyDownAction(event) {
+    // Prevent the arrow keys from scrolling the page:
+    event.preventDefault();
+    // React to keyboard input:
     switch (event.keyCode) {
         case KEY_DOWN:
             g.player.walkDown();
@@ -104,13 +107,13 @@ function pairwiseAction(action) {
 
 function collisionDetect() {
     g.intersections = [];
-    g.player.hitbox.resetCollidingSides();
+    for (var i = 0; i < g.entities.length; i++) {
+        g.entities[i].hitbox.resetCollidingSides();
+    }
     pairwiseAction(function(currentEntity, otherEntity) {
         // Draw the intersection
         var intersection = currentEntity.hitbox.intersect(otherEntity.hitbox);
-        if (currentEntity === g.player) {
-            g.player.hitbox.updateColliding(otherEntity.hitbox, intersection);
-        }
+        currentEntity.hitbox.updateColliding(otherEntity.hitbox, intersection);
         if (intersection !== null) {
             g.intersections.push(intersection);
         }
@@ -139,6 +142,7 @@ function draw() {
         }
     }
     applyCoulombsLaw();
+    collisionDetect();
     // All hitboxes should be drawn after entities are finished drawing
     for (var i = 0; i < g.entities.length; i++) {
         g.entities[i].hitbox.draw();
