@@ -89,42 +89,42 @@ function squaredDistanceBetween(entity, other) {
     return deltaX * deltaX + deltaY * deltaY;
 }
 
-function collisionDetect() {
-    g.intersections = [];
-    g.player.hitbox.resetCollidingSides();
+function pairwiseAction(action) {
     for (var i = 0; i < g.entities.length; i++) {
         var currentEntity = g.entities[i];
         for (var j = 0; j < g.entities.length; j++) {
             var otherEntity = g.entities[j];
-            // Check collisions with all entities except self
+            // Perform action with all entities except self
             if (currentEntity !== otherEntity) {
-                // Draw the intersection
-                var intersection = currentEntity.hitbox.intersect(otherEntity.hitbox);
-                if (currentEntity === g.player) {
-                    g.player.hitbox.updateColliding(otherEntity.hitbox, intersection);
-                }
-                if (intersection !== null) {
-                    g.intersections.push(intersection);
-                }
+                action(currentEntity, otherEntity);
             }
         }
     }
 }
 
-function applyCoulombsLaw() {
-    for (var i = 0; i < g.entities.length; i++) {
-        var currentEntity = g.entities[i];
-        for (var j = 0; j < g.entities.length; j++) {
-            var otherEntity = g.entities[j];
-            if (currentEntity !== otherEntity) {
-                if (!isUnaffectedByCharge(currentEntity) &&
-                    !isUnaffectedByCharge(otherEntity)) {
-                    var xAccelAmount = coulombsLawAcceleration(currentEntity, otherEntity);
-                    currentEntity.xAccelerate(xAccelAmount);
-                }
-            }
+function collisionDetect() {
+    g.intersections = [];
+    g.player.hitbox.resetCollidingSides();
+    pairwiseAction(function(currentEntity, otherEntity) {
+        // Draw the intersection
+        var intersection = currentEntity.hitbox.intersect(otherEntity.hitbox);
+        if (currentEntity === g.player) {
+            g.player.hitbox.updateColliding(otherEntity.hitbox, intersection);
         }
-    }
+        if (intersection !== null) {
+            g.intersections.push(intersection);
+        }
+    });
+}
+
+function applyCoulombsLaw() {
+    pairwiseAction(function(currentEntity, otherEntity) {
+        if (!isUnaffectedByCharge(currentEntity) &&
+            !isUnaffectedByCharge(otherEntity)) {
+            var xAccelAmount = coulombsLawAcceleration(currentEntity, otherEntity);
+            currentEntity.xAccelerate(xAccelAmount);
+        }
+    });
 }
 
 function draw() {
