@@ -2,12 +2,14 @@ var g = {
     context: null,
     player: new Player(),
     entities: [],
-    intersections: []
+    intersections: [],
+    messageBoxes: []
 };
 
 var SCREEN_HEIGHT = 500;
 var SCREEN_WIDTH = 800;
 var GAME_BG_COLOR = "#a0a0a0";
+var DIALOGUE_FONT = "Tahoma";
 
 var KEY_DOWN = 40;
 var KEY_UP = 38;
@@ -16,9 +18,13 @@ var KEY_RIGHT = 39;
 
 var COULOMBS_CONSTANT = 1;
 
+var DEBUG_MODE = true;
+
 function keyDownAction(event) {
     // Prevent the arrow keys from scrolling the page:
-    event.preventDefault();
+    if (!DEBUG_MODE) {
+        event.preventDefault();
+    }
     // React to keyboard input:
     switch (event.keyCode) {
         case KEY_DOWN:
@@ -60,6 +66,41 @@ function drawGenericRect(x, y, width, height, strokeColor, strokeWidth, fillColo
     }
 }
 
+function drawMessageBox(x, y, borderRadius, fontHeight, text) {
+    var textBlock = new TextBlock(fontHeight, 6, text);
+    var width = textBlock.width + 2 * borderRadius;
+    var height = textBlock.height + 2 * borderRadius;
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 3;
+    g.context.fillStyle = "white";
+    g.context.beginPath();
+    var circleLeft = Math.PI;
+    var circleTop = 3 * Math.PI / 2;
+    var circleRight = 0;
+    var circleBottom = Math.PI / 2;
+    var x2 = x + width;
+    var y2 = y + height;
+    var arcX = x + borderRadius;
+    var arcY = y + borderRadius;
+    var arcX2 = x2 - borderRadius;
+    var arcY2 = y2 - borderRadius;
+    // Upper left corner
+    g.context.arc(arcX, arcY, borderRadius, circleLeft, circleTop);
+    g.context.lineTo(arcX2, y);
+    // Upper right corner
+    g.context.arc(arcX2, arcY, borderRadius, circleTop, circleRight);
+    g.context.lineTo(x2, arcY);
+    // Lower right corner
+    g.context.arc(arcX2, arcY2, borderRadius, circleRight, circleBottom);
+    g.context.lineTo(arcX, y2);
+    // Lower left corner
+    g.context.arc(arcX, arcY2, borderRadius, circleBottom, circleLeft);
+    g.context.closePath();
+    g.context.stroke();
+    g.context.fill();
+    textBlock.drawAt(arcX, arcY);
+}
+
 function drawRect(x, y, width, height) {
     drawGenericRect(x, y, width, height, "black", 3, "white");
 }
@@ -77,7 +118,7 @@ function isUnaffectedByCharge(entity) {
 
 function coulombsLawAcceleration(entity, other) {
     if (isUnaffectedByCharge(entity) || isUnaffectedByCharge(other)) {
-        return 0;
+        return null;
     }
     var force = (COULOMBS_CONSTANT * entity.charge * other.charge) /
                 squaredDistanceBetween(entity, other);
@@ -148,6 +189,9 @@ function draw() {
     }
     applyCoulombsLaw();
     collisionDetect();
+    for (var i = 0; i < g.messageBoxes.length; i++) {
+        g.messageBoxes[i].draw();
+    }
     // All hitboxes should be drawn after entities are finished drawing
     for (var i = 0; i < g.entities.length; i++) {
         g.entities[i].hitbox.draw();
@@ -209,6 +253,14 @@ function testEntities(whichTest) {
             g.entities.push(new Weight(1, 1, 250, 260));
             break;
     }
+}
+
+function testMessageBox(text) {
+    g.messageBoxes.push({
+        draw: function() {
+            drawMessageBox(200, 250, 14, 12, text);
+        }
+    });
 }
 
 function setup() {
