@@ -1,6 +1,7 @@
 var g = {
     context: null,
-    player: new Player(),
+    player: null,
+    mainMenu: null,
     entities: [],
     intersections: [],
     messageBoxes: []
@@ -15,6 +16,7 @@ var KEY_DOWN = 40;
 var KEY_UP = 38;
 var KEY_LEFT = 37;
 var KEY_RIGHT = 39;
+var KEY_ENTER = 13;
 
 var COULOMBS_CONSTANT = 1;
 
@@ -26,19 +28,33 @@ function keyDownAction(event) {
         event.preventDefault();
     }
     // React to keyboard input:
-    switch (event.keyCode) {
-        case KEY_DOWN:
-            g.player.walkDown();
-            break;
-        case KEY_UP:
-            g.player.walkUp();
-            break;
-        case KEY_LEFT:
-            g.player.walkLeft();
-            break;
-        case KEY_RIGHT:
-            g.player.walkRight();
-            break;
+    if (g.player === null) {
+        switch (event.keyCode) {
+            case KEY_ENTER:
+                g.mainMenu.submit();
+                break;
+            case KEY_DOWN:
+                g.mainMenu.cursorDown();
+                break;
+            case KEY_UP:
+                g.mainMenu.cursorUp();
+                break;
+        }
+    } else {
+        switch (event.keyCode) {
+            case KEY_DOWN:
+                g.player.walkDown();
+                break;
+            case KEY_UP:
+                g.player.walkUp();
+                break;
+            case KEY_LEFT:
+                g.player.walkLeft();
+                break;
+            case KEY_RIGHT:
+                g.player.walkRight();
+                break;
+        }
     }
 }
 
@@ -66,10 +82,7 @@ function drawGenericRect(x, y, width, height, strokeColor, strokeWidth, fillColo
     }
 }
 
-function drawMessageBox(x, y, borderRadius, fontHeight, text) {
-    var textBlock = new TextBlock(fontHeight, 6, text);
-    var width = textBlock.width + 2 * borderRadius;
-    var height = textBlock.height + 2 * borderRadius;
+function drawRoundedRect(x, y, width, height, borderRadius) {
     g.context.strokeStyle = "black";
     g.context.lineWidth = 3;
     g.context.fillStyle = "white";
@@ -98,7 +111,23 @@ function drawMessageBox(x, y, borderRadius, fontHeight, text) {
     g.context.closePath();
     g.context.stroke();
     g.context.fill();
-    textBlock.drawAt(arcX, arcY);
+}
+
+function drawMessageBox(x, y, borderRadius, fontHeight, text) {
+    var textBlock = new TextBlock(fontHeight, 6, text);
+    var width = textBlock.width + 2 * borderRadius;
+    var height = textBlock.height + 2 * borderRadius;
+    drawRoundedRect(x, y, width, height, borderRadius);
+    textBlock.drawAt(x + borderRadius, y + borderRadius);
+}
+
+function drawCenteredMessageBox(borderRadius, fontHeight, text) {
+    var textBlock = new TextBlock(fontHeight, 6, text);
+    var width = textBlock.width + 2 * borderRadius;
+    var height = textBlock.height + 2 * borderRadius;
+    var centered = alignToCenter(width, height, SCREEN_WIDTH, SCREEN_HEIGHT);
+    drawRoundedRect(centered.x, centered.y, width, height, borderRadius);
+    textBlock.drawAt(centered.x + borderRadius, centered.y + borderRadius);
 }
 
 function drawRect(x, y, width, height) {
@@ -108,6 +137,15 @@ function drawRect(x, y, width, height) {
 function clearScreen() {
     g.context.fillStyle = GAME_BG_COLOR;
     g.context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+function alignToCenter(width, height, containerWidth, containerHeight) {
+    console.assert(containerWidth >= width, "Container is not wide enough");
+    console.assert(containerHeight >= height, "Container is not tall enough");
+    return {
+        x: (containerWidth - width) / 2,
+        y: (containerHeight - height) / 2
+    };
 }
 
 function isUnaffectedByCharge(entity) {
@@ -179,7 +217,6 @@ function applyCoulombsLaw() {
 function draw() {
     window.requestAnimationFrame(draw);
     clearScreen();
-    drawRect(20, 20, 40, 50);
     for (var i = 0; i < g.entities.length; i++) {
         var currentEntity = g.entities[i];
         currentEntity.draw();
@@ -193,13 +230,31 @@ function draw() {
         g.messageBoxes[i].draw();
     }
     // All hitboxes should be drawn after entities are finished drawing
-    for (var i = 0; i < g.entities.length; i++) {
-        g.entities[i].hitbox.draw();
+    if (DEBUG_MODE) {
+        for (var i = 0; i < g.entities.length; i++) {
+            g.entities[i].hitbox.draw();
+        }
+        for (var i = 0; i < g.intersections.length; i++) {
+            g.intersections[i].draw();
+        }
     }
-    for (var i = 0; i < g.intersections.length; i++) {
-        g.intersections[i].draw();
+}
+
+function loadLevel(levelNumber) {
+    g.entities = [];
+    g.intersections = [];
+    g.messageBoxes = [];
+    switch (levelNumber) {
+        case 0:
+            g.player = new Player(100, 170);
+            g.entities.push(g.player);
+            g.entities.push(new Wall(180, 20, 10, 80));
+            g.entities.push(new Wall(260, 20, 30, 60));
+            g.entities.push(new Wall(340, 20, 25, 70));
+            g.entities.push(new Wall(420, 20, 25, 100));
+            g.entities.push(new Wall(380, 70, 100, 20));
+            break;
     }
-    drawRect(100, 20, 40, 50);
 }
 
 function testEntities(whichTest) {
@@ -264,16 +319,13 @@ function testMessageBox(text) {
 }
 
 function setup() {
-    g.entities.push(g.player);
-    g.entities.push(new Wall(180, 20, 10, 80));
-    g.entities.push(new Wall(260, 20, 30, 60));
-    g.entities.push(new Wall(340, 20, 25, 70));
-    g.entities.push(new Wall(420, 20, 25, 100));
-    g.entities.push(new Wall(380, 70, 100, 20));
     var canvas = document.getElementById("screen");
     canvas.height = SCREEN_HEIGHT;
     canvas.width = SCREEN_WIDTH;
     g.context = canvas.getContext("2d");
+    // Context must exist before instantiating main menu
+    g.mainMenu = new MainMenu();
+    g.messageBoxes.push(g.mainMenu);
     window.addEventListener("keydown", keyDownAction);
     draw();
 }
