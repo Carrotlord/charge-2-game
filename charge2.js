@@ -273,11 +273,11 @@ function loadLevel(levelNumber) {
         case 0:
             g.player = new Player(200, 170);
             g.entities.push(g.player);
-            g.entities.push(new Wall(180, 20, 10, 80));
-            g.entities.push(new Wall(260, 20, 30, 60));
-            g.entities.push(new Wall(340, 20, 25, 70));
-            g.entities.push(new Wall(420, 20, 25, 100));
-            g.entities.push(new Wall(380, 70, 100, 20));
+            g.entities.push(new Wall(180, 280, 10, 80));
+            g.entities.push(new Wall(260, 280, 30, 60));
+            g.entities.push(new Wall(340, 280, 25, 70));
+            g.entities.push(new Wall(420, 280, 25, 100));
+            g.entities.push(new Wall(380, 330, 100, 20));
             g.entities.push(new Wall(100, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 200, 20));
             // Ground
             g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));

@@ -59,6 +59,7 @@ Player.prototype.walkRight = function() {
 
 Player.prototype.jump = function() {
     if (!this.isInAir()) {
+        this.yVel = 0;
         this.yAccelerate(-15);
     }
 }
