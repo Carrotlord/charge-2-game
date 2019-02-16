@@ -10,7 +10,7 @@ function Player(x, y) {
 }
 
 Player.prototype.isInAir = function() {
-    return !this.hitbox.isBottomColliding;
+    return !this.hitbox.isBottomColliding || this.yVel < 0;
 }
 
 Player.prototype.move = function() {

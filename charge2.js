@@ -4,7 +4,8 @@ var g = {
     mainMenu: null,
     entities: [],
     intersections: [],
-    messageBoxes: []
+    messageBoxes: [],
+    pressedKeys: {}
 };
 
 var SCREEN_HEIGHT = 500;
@@ -12,25 +13,46 @@ var SCREEN_WIDTH = 800;
 var GAME_BG_COLOR = "#a0a0a0";
 var DIALOGUE_FONT = "Tahoma";
 
-var KEY_DOWN = 40;
-var KEY_UP = 38;
-var KEY_LEFT = 37;
-var KEY_RIGHT = 39;
-var KEY_ENTER = 13;
+var KEY_DOWN = "40";
+var KEY_UP = "38";
+var KEY_LEFT = "37";
+var KEY_RIGHT = "39";
+var KEY_ENTER = "13";
 
 var COULOMBS_CONSTANT = 1;
 var GRAVITATIONAL_ACCEL = 1;
 
 var DEBUG_MODE = true;
 
-function keyDownAction(event) {
+function preventDefault(event) {
     // Prevent the arrow keys from scrolling the page:
     if (!DEBUG_MODE) {
         event.preventDefault();
     }
+}
+
+function registerKeyDown(event) {
+    preventDefault(event);
+    g.pressedKeys[event.keyCode] = true;
+}
+
+function registerKeyUp(event) {
+    preventDefault(event);
+    g.pressedKeys[event.keyCode] = false;
+}
+
+function handleKeys() {
+    for (var key in g.pressedKeys) {
+        if (g.pressedKeys.hasOwnProperty(key) && g.pressedKeys[key]) {
+            keyDownAction(key);
+        }
+    }
+}
+
+function keyDownAction(keyCode) {
     // React to keyboard input:
     if (g.player === null) {
-        switch (event.keyCode) {
+        switch (keyCode) {
             case KEY_ENTER:
                 g.mainMenu.submit();
                 break;
@@ -42,7 +64,7 @@ function keyDownAction(event) {
                 break;
         }
     } else {
-        switch (event.keyCode) {
+        switch (keyCode) {
             case KEY_UP:
                 g.player.jump();
                 break;
@@ -214,6 +236,7 @@ function applyCoulombsLaw() {
 
 function draw() {
     window.requestAnimationFrame(draw);
+    handleKeys();
     clearScreen();
     for (var i = 0; i < g.entities.length; i++) {
         var currentEntity = g.entities[i];
@@ -331,6 +354,7 @@ function setup() {
     // Context must exist before instantiating main menu
     g.mainMenu = new MainMenu();
     g.messageBoxes.push(g.mainMenu);
-    window.addEventListener("keydown", keyDownAction);
+    window.addEventListener("keydown", registerKeyDown);
+    window.addEventListener("keyup", registerKeyUp);
     draw();
 }
