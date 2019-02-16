@@ -19,6 +19,7 @@ var KEY_RIGHT = 39;
 var KEY_ENTER = 13;
 
 var COULOMBS_CONSTANT = 1;
+var GRAVITATIONAL_ACCEL = 1;
 
 var DEBUG_MODE = true;
 
@@ -42,11 +43,8 @@ function keyDownAction(event) {
         }
     } else {
         switch (event.keyCode) {
-            case KEY_DOWN:
-                g.player.walkDown();
-                break;
             case KEY_UP:
-                g.player.walkUp();
+                g.player.jump();
                 break;
             case KEY_LEFT:
                 g.player.walkLeft();
@@ -220,6 +218,10 @@ function draw() {
     for (var i = 0; i < g.entities.length; i++) {
         var currentEntity = g.entities[i];
         currentEntity.draw();
+        if (!isUndefined(currentEntity.mass)) {
+            // All entities with mass are affected by gravity
+            currentEntity.yAccelerate(GRAVITATIONAL_ACCEL);
+        }
         if (!isUndefined(currentEntity.move)) {
             currentEntity.move();
         }
@@ -246,13 +248,16 @@ function loadLevel(levelNumber) {
     g.messageBoxes = [];
     switch (levelNumber) {
         case 0:
-            g.player = new Player(100, 170);
+            g.player = new Player(200, 170);
             g.entities.push(g.player);
             g.entities.push(new Wall(180, 20, 10, 80));
             g.entities.push(new Wall(260, 20, 30, 60));
             g.entities.push(new Wall(340, 20, 25, 70));
             g.entities.push(new Wall(420, 20, 25, 100));
             g.entities.push(new Wall(380, 70, 100, 20));
+            g.entities.push(new Wall(100, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 200, 20));
+            // Ground
+            g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));
             break;
     }
 }
