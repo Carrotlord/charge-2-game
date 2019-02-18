@@ -101,19 +101,16 @@ Hitbox.prototype.updateColliding = function(otherHitbox, intersection) {
 }
 
 Hitbox.prototype.collisionCorrect = function(otherHitbox) {
-    if (!this.owner.isFixed) {
-        // Move the owner until the intersecting rectangle
-        // is acceptable
-        while (!this.intersect(otherHitbox).isWithinThreshold()) {
-            if (this.isTopColliding) {
-                this.owner.y++;
-            } else if (this.isBottomColliding) {
-                this.owner.y--;
-            } else if (this.isLeftColliding) {
-                this.owner.x++;
-            } else if (this.isRightColliding) {
-                this.owner.x--;
-            }
+    if (!this.owner.isFixed && !this.intersect(otherHitbox).isWithinThreshold()) {
+        // Slightly move the owner away from the source of the collision
+        if (this.isTopColliding) {
+            this.owner.y++;
+        } else if (this.isBottomColliding) {
+            this.owner.y--;
+        } else if (this.isLeftColliding) {
+            this.owner.x++;
+        } else if (this.isRightColliding) {
+            this.owner.x--;
         }
     }
 }
