@@ -42,6 +42,12 @@ Weight.prototype.moveY = function() {
 
 Weight.prototype.draw = function() {
     drawRect(this.x, this.y, this.width, this.height);
+    var center = this.getCenter();
+    if (this.charge > 0) {
+        drawPlus(center.x, center.y, 7);
+    } else if (this.charge < 0) {
+        drawMinus(center.x, center.y, 7);
+    }
 }
 
 Weight.prototype.xAccelerate = function(accelAmount) {

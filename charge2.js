@@ -154,6 +154,25 @@ function drawRect(x, y, width, height) {
     drawGenericRect(x, y, width, height, "black", 3, "white");
 }
 
+function drawPlus(x, y, size) {
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 2;
+    g.context.beginPath();
+    g.context.moveTo(x, y - size);
+    g.context.lineTo(x, y + size);
+    g.context.stroke();
+    drawMinus(x, y, size);
+}
+
+function drawMinus(x, y, size) {
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 2;
+    g.context.beginPath();
+    g.context.moveTo(x - size, y);
+    g.context.lineTo(x + size, y);
+    g.context.stroke();
+}
+
 function clearScreen() {
     g.context.fillStyle = GAME_BG_COLOR;
     g.context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -334,6 +353,15 @@ function testEntities(whichTest) {
             g.entities.push(new Weight(1, 1, 250, 200));
             g.entities.push(new Weight(1, -1, 200, 260));
             g.entities.push(new Weight(1, 1, 250, 260));
+            break;
+        case "4-mixed-c":
+            g.entities.push(new Weight(1, 5, 200, 200));
+            g.entities.push(new Weight(1, 5, 250, 200));
+            g.entities.push(new Weight(1, -5, 200, 260));
+            g.entities.push(new Weight(1, 5, 250, 260));
+            break;
+        case "1-neutral":
+            g.entities.push(new Weight(1, 0, 200, 200));
             break;
     }
 }
