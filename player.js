@@ -1,4 +1,5 @@
 function Player(x, y) {
+    this.isFixed = false;
     this.x = x;
     this.y = y;
     this.walkXVel = 5;

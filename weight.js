@@ -1,4 +1,5 @@
 function Weight(mass, charge, x, y) {
+    this.isFixed = false;
     this.mass = mass;
     this.charge = charge;
     this.x = x;

@@ -1,4 +1,5 @@
 function Wall(x, y, width, height) {
+    this.isFixed = true;
     this.x = x;
     this.y = y;
     this.width = width;

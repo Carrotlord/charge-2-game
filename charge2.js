@@ -19,6 +19,8 @@ var KEY_LEFT = "37";
 var KEY_RIGHT = "39";
 var KEY_ENTER = "13";
 
+var COLLISION_THRESHOLD = 1;
+
 var COULOMBS_CONSTANT = 1;
 var GRAVITATIONAL_ACCEL = 1;
 
@@ -238,6 +240,7 @@ function collisionDetect() {
         currentEntity.hitbox.updateColliding(otherEntity.hitbox, intersection);
         if (intersection !== null) {
             g.intersections.push(intersection);
+            currentEntity.hitbox.collisionCorrect(otherEntity.hitbox);
         }
     });
 }

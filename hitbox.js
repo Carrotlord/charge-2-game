@@ -9,6 +9,14 @@ Rectangle.prototype.draw = function() {
     drawGenericRect(this.x, this.y, this.width, this.height, "blue", 1);
 }
 
+Rectangle.prototype.isWithinThreshold = function() {
+    if (this.width > this.height) {
+        return this.height <= COLLISION_THRESHOLD;
+    } else {
+        return this.width <= COLLISION_THRESHOLD;
+    }
+}
+
 function Hitbox(owner, xOffset, yOffset, xOffset2, yOffset2) {
     this.owner = owner;
     this.xOffset = xOffset;
@@ -87,6 +95,24 @@ Hitbox.prototype.updateColliding = function(otherHitbox, intersection) {
                 this.isBottomColliding = true;
             } else {
                 this.isTopColliding = true;
+            }
+        }
+    }
+}
+
+Hitbox.prototype.collisionCorrect = function(otherHitbox) {
+    if (!this.owner.isFixed) {
+        // Move the owner until the intersecting rectangle
+        // is acceptable
+        while (!this.intersect(otherHitbox).isWithinThreshold()) {
+            if (this.isTopColliding) {
+                this.owner.y++;
+            } else if (this.isBottomColliding) {
+                this.owner.y--;
+            } else if (this.isLeftColliding) {
+                this.owner.x++;
+            } else if (this.isRightColliding) {
+                this.owner.x--;
             }
         }
     }
