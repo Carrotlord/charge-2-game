@@ -279,6 +279,13 @@ function applyCoulombsLaw() {
     });
 }
 
+function removeEntity(entity) {
+    var index = g.entities.indexOf(entity);
+    if (index !== -1) {
+        g.entities.splice(index, 1);
+    }
+}
+
 function draw() {
     window.requestAnimationFrame(draw);
     handleKeys();
@@ -327,11 +334,17 @@ function loadLevel(levelNumber) {
             g.entities.push(new Wall(100, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 200, 20));
             // Ground
             g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));
+            var door0 = new Wall(500, 280, 10, 80);
+            g.entities.push(door0);
             g.entities.push(new Switch(
                 180, SCREEN_HEIGHT - 102, 50, 4,
-                {},
-                function (targets) { console.log("switch on"); },
-                function (targets) { console.log("switch off"); }
+                {door: door0},
+                function(targets) {
+                    removeEntity(targets.door);
+                },
+                function(targets) {
+                    g.entities.push(targets.door);
+                }
             ));
             break;
     }
