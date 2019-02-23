@@ -229,6 +229,27 @@ function pairwiseAction(action) {
     }
 }
 
+function updateSwitches() {
+    for (var i = 0; i < g.entities.length; i++) {
+        var currentEntity = g.entities[i];
+        if (currentEntity.type === ":switch") {
+            var isCollidingWithAnyWeight = false;
+            for (var j = 0; j < g.entities.length; j++) {
+                var otherEntity = g.entities[j];
+                if (otherEntity.type === ":weight" &&
+                    currentEntity.hitbox.intersect(otherEntity.hitbox) !== null) {
+                    isCollidingWithAnyWeight = true;
+                    currentEntity.turnOn();
+                    break;
+                }
+            }
+            if (!isCollidingWithAnyWeight) {
+                currentEntity.turnOff();
+            }
+        }
+    }
+}
+
 function collisionDetect() {
     g.intersections = [];
     for (var i = 0; i < g.entities.length; i++) {
@@ -237,10 +258,12 @@ function collisionDetect() {
     pairwiseAction(function(currentEntity, otherEntity) {
         // Draw the intersection
         var intersection = currentEntity.hitbox.intersect(otherEntity.hitbox);
-        currentEntity.hitbox.updateColliding(otherEntity.hitbox, intersection);
-        if (intersection !== null) {
-            g.intersections.push(intersection);
-            currentEntity.hitbox.collisionCorrect(otherEntity.hitbox);
+        if (currentEntity.isSolid && otherEntity.isSolid) {
+            currentEntity.hitbox.updateColliding(otherEntity.hitbox, intersection);
+            if (intersection !== null) {
+                g.intersections.push(intersection);
+                currentEntity.hitbox.collisionCorrect(otherEntity.hitbox);
+            }
         }
     });
 }
@@ -273,6 +296,7 @@ function draw() {
     }
     applyCoulombsLaw();
     collisionDetect();
+    updateSwitches();
     for (var i = 0; i < g.messageBoxes.length; i++) {
         g.messageBoxes[i].draw();
     }
@@ -303,6 +327,12 @@ function loadLevel(levelNumber) {
             g.entities.push(new Wall(100, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 200, 20));
             // Ground
             g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));
+            g.entities.push(new Switch(
+                180, SCREEN_HEIGHT - 102, 50, 4,
+                {},
+                function (targets) { console.log("switch on"); },
+                function (targets) { console.log("switch off"); }
+            ));
             break;
     }
 }

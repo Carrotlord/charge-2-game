@@ -1,5 +1,6 @@
 function Player(x, y) {
     this.isFixed = false;
+    this.isSolid = true;
     this.x = x;
     this.y = y;
     this.walkXVel = 5;
