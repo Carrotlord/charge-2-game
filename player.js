@@ -75,6 +75,10 @@ Player.prototype.draw = function() {
     drawCircle(this.x, this.y, 10);
 }
 
+Player.prototype.getCenter = function() {
+    return this.hitbox.getCenter();
+}
+
 Player.prototype.dropWeight = function(weightCharge) {
     g.entities.push(new Weight(1, weightCharge, this.x + this.dropXOffset, this.y + this.dropYOffset));
 }
@@ -98,4 +102,26 @@ Player.prototype.dropNeutralWeight = function() {
         this.dropWeight(0);
         this.neutralWeights--;
     }
+}
+
+Player.prototype.collectNearbyWeights = function() {
+    var toBeRemoved = [];
+    for (var i = 0; i < g.entities.length; i++) {
+        var currentEntity = g.entities[i];
+        if (currentEntity.type === ":weight" &&
+            distanceBetween(this, currentEntity) <= COLLECT_RADIUS) {
+            if (currentEntity.charge > 0) {
+                this.positiveWeights++;
+            } else if (currentEntity.charge < 0) {
+                this.negativeWeights++;
+            } else {
+                this.neutralWeights++;
+            }
+            toBeRemoved.push(currentEntity);
+        }
+    }
+    // Erase all nearby weights
+    toBeRemoved.forEach(function(entity) {
+        removeEntity(entity);
+    });
 }

@@ -26,6 +26,7 @@ var COLLISION_THRESHOLD = 1;
 
 var COULOMBS_CONSTANT = 1;
 var GRAVITATIONAL_ACCEL = 1;
+var COLLECT_RADIUS = 60;
 
 var DEBUG_MODE = true;
 
@@ -62,6 +63,9 @@ function registerKeyDown(event) {
                 break;
             case KEY_C:
                 g.player.dropNegativeWeight();
+                break;
+            case KEY_ENTER:
+                g.player.collectNearbyWeights();
                 break;
         }
     }
@@ -231,6 +235,10 @@ function squaredDistanceBetween(entity, other) {
     var deltaX = entity.getCenter().x - other.getCenter().x;
     var deltaY = entity.getCenter().y - other.getCenter().y;
     return deltaX * deltaX + deltaY * deltaY;
+}
+
+function distanceBetween(entity, other) {
+    return Math.sqrt(squaredDistanceBetween(entity, other));
 }
 
 function pairwiseAction(action) {
