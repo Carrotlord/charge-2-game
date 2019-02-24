@@ -9,6 +9,11 @@ function Player(x, y) {
     this.yVel = 0;
     this.mass = 1;
     this.hitbox = new Hitbox(this, -10, -15, 10, 15);
+    this.positiveWeights = 5;
+    this.negativeWeights = 5;
+    this.neutralWeights = 5;
+    this.dropXOffset = 15;
+    this.dropYOffset = -10;
 }
 
 Player.prototype.isInAir = function() {
@@ -68,4 +73,29 @@ Player.prototype.jump = function() {
 
 Player.prototype.draw = function() {
     drawCircle(this.x, this.y, 10);
+}
+
+Player.prototype.dropWeight = function(weightCharge) {
+    g.entities.push(new Weight(1, weightCharge, this.x + this.dropXOffset, this.y + this.dropYOffset));
+}
+
+Player.prototype.dropPositiveWeight = function() {
+    if (this.positiveWeights > 0) {
+        this.dropWeight(10);
+        this.positiveWeights--;
+    }
+}
+
+Player.prototype.dropNegativeWeight = function() {
+    if (this.negativeWeights > 0) {
+        this.dropWeight(-10);
+        this.negativeWeights--;
+    }
+}
+
+Player.prototype.dropNeutralWeight = function() {
+    if (this.neutralWeights > 0) {
+        this.dropWeight(0);
+        this.neutralWeights--;
+    }
 }

@@ -18,6 +18,9 @@ var KEY_UP = "38";
 var KEY_LEFT = "37";
 var KEY_RIGHT = "39";
 var KEY_ENTER = "13";
+var KEY_Z = "90";
+var KEY_X = "88";
+var KEY_C = "67";
 
 var COLLISION_THRESHOLD = 1;
 
@@ -36,23 +39,7 @@ function preventDefault(event) {
 function registerKeyDown(event) {
     preventDefault(event);
     g.pressedKeys[event.keyCode] = true;
-}
-
-function registerKeyUp(event) {
-    preventDefault(event);
-    g.pressedKeys[event.keyCode] = false;
-}
-
-function handleKeys() {
-    for (var key in g.pressedKeys) {
-        if (g.pressedKeys.hasOwnProperty(key) && g.pressedKeys[key]) {
-            keyDownAction(key);
-        }
-    }
-}
-
-function keyDownAction(keyCode) {
-    // React to keyboard input:
+    var keyCode = event.keyCode.toString();
     if (g.player === null) {
         switch (keyCode) {
             case KEY_ENTER:
@@ -66,6 +53,36 @@ function keyDownAction(keyCode) {
                 break;
         }
     } else {
+        switch (keyCode) {
+            case KEY_Z:
+                g.player.dropNeutralWeight();
+                break;
+            case KEY_X:
+                g.player.dropPositiveWeight();
+                break;
+            case KEY_C:
+                g.player.dropNegativeWeight();
+                break;
+        }
+    }
+}
+
+function registerKeyUp(event) {
+    preventDefault(event);
+    g.pressedKeys[event.keyCode] = false;
+}
+
+function handleKeys() {
+    for (var key in g.pressedKeys) {
+        if (g.pressedKeys.hasOwnProperty(key) && g.pressedKeys[key]) {
+            keyCurrentlyDownAction(key);
+        }
+    }
+}
+
+function keyCurrentlyDownAction(keyCode) {
+    // React to keyboard input:
+    if (g.player !== null) {
         switch (keyCode) {
             case KEY_UP:
                 g.player.jump();
