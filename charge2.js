@@ -196,6 +196,34 @@ function drawMinus(x, y, size) {
     g.context.stroke();
 }
 
+function drawArrow(x, y, rotationAngle) {
+    var arrowHeadWidth = 8;
+    var arrowHeadHeight = 6;
+    var arrowTailHeight = 16;
+    var arrowTailOffset = 2;
+    var centerY = y + (arrowTailHeight + arrowTailOffset) / 2;
+    g.context.strokeStyle = "black";
+    g.context.fillStyle = "black";
+    g.context.lineWidth = 2;
+    g.context.translate(x, centerY);
+    g.context.rotate(rotationAngle);
+    g.context.translate(-x, -centerY);
+    // Draw head of arrow
+    g.context.beginPath();
+    g.context.moveTo(x, y);
+    g.context.lineTo(x - arrowHeadWidth / 2, y + arrowHeadHeight);
+    g.context.lineTo(x + arrowHeadWidth / 2, y + arrowHeadHeight);
+    g.context.closePath();
+    g.context.fill();
+    // Draw tail of arrow
+    g.context.beginPath();
+    g.context.moveTo(x, y + arrowTailOffset);
+    g.context.lineTo(x, y + arrowTailHeight + arrowTailOffset);
+    g.context.stroke();
+    // Undo transformations
+    g.context.setTransform(1, 0, 0, 1, 0, 0);
+}
+
 function clearScreen() {
     g.context.fillStyle = GAME_BG_COLOR;
     g.context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
