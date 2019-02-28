@@ -16,3 +16,7 @@ Vector.prototype.setMagnitude = function(newMagnitude) {
 function convertPointsToVector(x, y, x2, y2) {
     return new Vector(x2 - x, y2 - y);
 }
+
+function convertMagnitudeAngleToVector(magnitude, angle) {
+    return new Vector(magnitude * Math.cos(angle), magnitude * Math.sin(angle));
+}

@@ -332,6 +332,24 @@ function applyCoulombsLaw() {
     });
 }
 
+function applyFields() {
+    pairwiseAction(function(currentEntity, otherEntity) {
+        if (currentEntity.type === ":field" && !isUnaffectedByCharge(otherEntity) &&
+            currentEntity.hitbox.intersect(otherEntity.hitbox) !== null) {
+            var forceMagnitude = otherEntity.charge * currentEntity.strength;
+            // Since fields with an angle of 0 point upwards, and
+            // vectors with an angle of 0 point right, we need to subtract
+            // pi/2 from the rotation angle of the field.
+            var accelVector = convertMagnitudeAngleToVector(
+                forceMagnitude / otherEntity.mass,
+                currentEntity.rotationAngle - Math.PI / 2
+            );
+            otherEntity.xAccelerate(accelVector.xComponent);
+            otherEntity.yAccelerate(accelVector.yComponent);
+        }
+    });
+}
+
 function removeEntity(entity) {
     var index = g.entities.indexOf(entity);
     if (index !== -1) {
@@ -355,6 +373,7 @@ function draw() {
         }
     }
     applyCoulombsLaw();
+    applyFields();
     collisionDetect();
     updateSwitches();
     for (var i = 0; i < g.messageBoxes.length; i++) {
@@ -377,6 +396,8 @@ function loadLevel(levelNumber) {
     g.messageBoxes = [];
     switch (levelNumber) {
         case 0:
+            g.entities.push(new Field(400, SCREEN_HEIGHT - 300, 150, 200, 0));
+            g.entities.push(new Field(550, SCREEN_HEIGHT - 300, 150, 200, Math.PI / 3));
             g.player = new Player(200, 170);
             g.entities.push(g.player);
             g.entities.push(new Wall(180, 280, 10, 80));
