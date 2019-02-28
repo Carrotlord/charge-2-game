@@ -397,7 +397,7 @@ function loadLevel(levelNumber) {
     switch (levelNumber) {
         case 0:
             g.entities.push(new Field(400, SCREEN_HEIGHT - 300, 150, 200, 0));
-            g.entities.push(new Field(550, SCREEN_HEIGHT - 300, 150, 200, Math.PI / 3));
+            g.entities.push(new Field(550, SCREEN_HEIGHT - 300, 150, 200, Math.PI / 3, 0.05));
             g.player = new Player(200, 170);
             g.entities.push(g.player);
             g.entities.push(new Wall(180, 280, 10, 80));

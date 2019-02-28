@@ -1,4 +1,4 @@
-function Field(x, y, width, height, rotationAngle) {
+function Field(x, y, width, height, rotationAngle, strength) {
     this.isFixed = true;
     this.isSolid = false;
     this.type = ":field";
@@ -7,7 +7,7 @@ function Field(x, y, width, height, rotationAngle) {
     this.width = width;
     this.height = height;
     this.rotationAngle = rotationAngle;
-    this.strength = 0.12;
+    this.strength = strength || 0.12;
     this.hitbox = new Hitbox(this, 0, 0, this.width, this.height);
 }
 
