@@ -224,6 +224,21 @@ function drawArrow(x, y, rotationAngle) {
     g.context.setTransform(1, 0, 0, 1, 0, 0);
 }
 
+function drawStar(x, y, sideLength) {
+    g.context.fillStyle = "black";
+    g.context.beginPath();
+    g.context.moveTo(x, y);
+    var angles = [-72, 72, 0, 144, 72, -144, 144, -72, -144];
+    for (var i = 0; i < angles.length; i++) {
+        var currentVector = convertMagnitudeAngleToVector(sideLength, toRadians(angles[i]));
+        x += currentVector.xComponent;
+        y += currentVector.yComponent;
+        g.context.lineTo(x, y);
+    }
+    g.context.closePath();
+    g.context.fill();
+}
+
 function clearScreen() {
     g.context.fillStyle = GAME_BG_COLOR;
     g.context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
