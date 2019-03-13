@@ -8,7 +8,7 @@ function Player(x, y) {
     this.xVel = 0;
     this.yVel = 0;
     this.mass = 1;
-    this.hitbox = new Hitbox(this, -10, -15, 10, 15);
+    this.hitbox = new Hitbox(this, -10, -10, 10, 40);
     this.positiveWeights = 5;
     this.negativeWeights = 5;
     this.neutralWeights = 5;
@@ -72,6 +72,33 @@ Player.prototype.jump = function() {
 }
 
 Player.prototype.draw = function() {
+    var bodyHeight = 30;
+    var legHeight = 10;
+    var armLength = 10;
+    var neckHeight = 15;
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 2;
+    // Body
+    g.context.beginPath();
+    g.context.moveTo(this.x, this.y);
+    g.context.lineTo(this.x, this.y + bodyHeight);
+    g.context.stroke();
+    // Left leg
+    g.context.beginPath();
+    g.context.moveTo(this.x, this.y + bodyHeight);
+    g.context.lineTo(this.x - legHeight, this.y + bodyHeight + legHeight);
+    g.context.stroke();
+    // Right leg
+    g.context.beginPath();
+    g.context.moveTo(this.x, this.y + bodyHeight);
+    g.context.lineTo(this.x + legHeight, this.y + bodyHeight + legHeight);
+    g.context.stroke();
+    // Both arms
+    g.context.beginPath();
+    g.context.moveTo(this.x - armLength, this.y + neckHeight);
+    g.context.lineTo(this.x + armLength, this.y + neckHeight);
+    g.context.stroke();
+    // Head
     drawCircle(this.x, this.y, 10);
 }
 

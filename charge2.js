@@ -2,6 +2,7 @@ var g = {
     context: null,
     player: null,
     mainMenu: null,
+    currentLevel: null,
     entities: [],
     intersections: [],
     messageBoxes: [],
@@ -386,6 +387,10 @@ function draw() {
         if (!isUndefined(currentEntity.move)) {
             currentEntity.move();
         }
+        if (!isUndefined(currentEntity.collect) &&
+            g.player.hitbox.intersect(currentEntity.hitbox) !== null) {
+            currentEntity.collect();
+        }
     }
     applyCoulombsLaw();
     applyFields();
@@ -406,35 +411,19 @@ function draw() {
 }
 
 function loadLevel(levelNumber) {
+    g.currentLevel = levelNumber;
     g.entities = [];
     g.intersections = [];
     g.messageBoxes = [];
     switch (levelNumber) {
         case 0:
-            g.entities.push(new Field(400, SCREEN_HEIGHT - 300, 150, 200, 0));
-            g.entities.push(new Field(550, SCREEN_HEIGHT - 300, 150, 200, Math.PI / 3, 0.05));
-            g.player = new Player(200, 170);
-            g.entities.push(g.player);
-            g.entities.push(new Wall(180, 280, 10, 80));
-            g.entities.push(new Wall(260, 280, 30, 60));
-            g.entities.push(new Wall(340, 280, 25, 70));
-            g.entities.push(new Wall(420, 280, 25, 100));
-            g.entities.push(new Wall(380, 330, 100, 20));
-            g.entities.push(new Wall(100, SCREEN_HEIGHT - 100, SCREEN_WIDTH - 200, 20));
-            // Ground
-            g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));
-            var door0 = new Wall(500, 280, 10, 80);
-            g.entities.push(door0);
-            g.entities.push(new Switch(
-                180, SCREEN_HEIGHT - 102, 50, 4,
-                {door: door0},
-                function(targets) {
-                    removeEntity(targets.door);
-                },
-                function(targets) {
-                    g.entities.push(targets.door);
-                }
-            ));
+            loadDebugRoom();
+            break;
+        case 1:
+            loadLevel1();
+            break;
+        default:
+            endGame();
             break;
     }
 }

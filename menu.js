@@ -62,6 +62,9 @@ MainMenu.prototype.cursorDown = function () {
 MainMenu.prototype.submit = function() {
     switch (this.cursorState) {
         case 0:
+            loadLevel(1);
+            break;
+        case 2:
             loadLevel(0);
             break;
         case 3:
