@@ -6,11 +6,31 @@ function createRoomBorders() {
     g.entities.push(new Wall(SCREEN_WIDTH - wallWidth, 0, wallWidth, SCREEN_HEIGHT));
 }
 
+function spawnPlayer(x, y) {
+    g.player = new Player(x, y);
+    g.entities.push(g.player);
+}
+
+function spawnDoorSwitch(x, y, width, height, targetDoor) {
+    g.entities.push(new Switch(
+        x, y, width, height,
+        {door: targetDoor},
+        function(targets) {
+            removeEntity(targets.door);
+        },
+        function(targets) {
+            g.entities.push(targets.door);
+        }
+    ));
+}
+
 function loadDebugRoom() {
     g.entities.push(new Field(400, SCREEN_HEIGHT - 300, 150, 200, 0));
     g.entities.push(new Field(550, SCREEN_HEIGHT - 300, 150, 200, Math.PI / 3, 0.05));
-    g.player = new Player(200, 170);
-    g.entities.push(g.player);
+    spawnPlayer(200, 170);
+    g.player.positiveWeights = 5;
+    g.player.negativeWeights = 5;
+    g.player.neutralWeights = 5;
     g.entities.push(new Wall(180, 280, 10, 40));
     g.entities.push(new Wall(260, 280, 30, 60));
     g.entities.push(new Wall(340, 280, 25, 70));
@@ -21,23 +41,13 @@ function loadDebugRoom() {
     g.entities.push(new Wall(0, SCREEN_HEIGHT - 20, SCREEN_WIDTH, 20));
     var door0 = new Wall(500, 280, 10, 40);
     g.entities.push(door0);
-    g.entities.push(new Switch(
-        180, SCREEN_HEIGHT - 102, 50, 4,
-        {door: door0},
-        function(targets) {
-            removeEntity(targets.door);
-        },
-        function(targets) {
-            g.entities.push(targets.door);
-        }
-    ));
+    spawnDoorSwitch(180, SCREEN_HEIGHT - 102, 50, 4, door0);
 }
 
 function loadLevel1() {
     DEBUG_MODE = false;
     var wallWidth = 20;
-    g.player = new Player(200, 170);
-    g.entities.push(g.player);
+    spawnPlayer(200, 170);
     var stairHeight = 35;
     var stairSpacing = 75;
     var stairStart = 250;
@@ -55,6 +65,29 @@ function loadLevel1() {
         SCREEN_WIDTH - wallWidth - 30,
         SCREEN_HEIGHT - wallWidth - (indexStart + 1) * stairHeight - 20
     ));
+}
+
+function loadLevel2() {
+    spawnPlayer(200, 170);
+    g.entities.push(new Wall(500, 0, 20, SCREEN_HEIGHT - 100));
+    var door = new Wall(500, SCREEN_HEIGHT - 100, 20, 80);
+    g.entities.push(door);
+    createRoomBorders();
+    g.entities.push(new Weight(1, 0, 150, 170));
+    spawnDoorSwitch(350, SCREEN_HEIGHT - 22, 50, 4, door);
+    g.entities.push(new Goal(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 50));
+}
+
+function loadLevel3() {
+    g.entities.push(new Field(350, 20, 50, SCREEN_HEIGHT - 40, 0));
+    spawnPlayer(200, 170);
+    g.entities.push(new Wall(500, 0, 20, SCREEN_HEIGHT - 100));
+    var door = new Wall(500, SCREEN_HEIGHT - 100, 20, 80);
+    g.entities.push(door);
+    createRoomBorders();
+    g.entities.push(new Weight(1, 10, 150, 170));
+    spawnDoorSwitch(350, 18, 50, 4, door);
+    g.entities.push(new Goal(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 50));
 }
 
 function endGame() {

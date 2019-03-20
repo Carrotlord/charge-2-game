@@ -9,9 +9,9 @@ function Player(x, y) {
     this.yVel = 0;
     this.mass = 1;
     this.hitbox = new Hitbox(this, -10, -10, 10, 40);
-    this.positiveWeights = 5;
-    this.negativeWeights = 5;
-    this.neutralWeights = 5;
+    this.positiveWeights = 0;
+    this.negativeWeights = 0;
+    this.neutralWeights = 0;
     this.dropXOffset = 15;
     this.dropYOffset = -10;
 }

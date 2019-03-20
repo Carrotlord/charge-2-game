@@ -422,6 +422,12 @@ function loadLevel(levelNumber) {
         case 1:
             loadLevel1();
             break;
+        case 2:
+            loadLevel2();
+            break;
+        case 3:
+            loadLevel3();
+            break;
         default:
             endGame();
             break;
