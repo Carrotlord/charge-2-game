@@ -24,3 +24,20 @@ Field.prototype.draw = function() {
         }
     }
 }
+
+function MagneticField(x, y, width, height, direction, strength) {
+    this.isFixed = true;
+    this.isSolid = false;
+    this.type = ":magnetic_field";
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.strength = strength || 0.04;
+    if (direction === ":into_screen") {
+        this.strength = -this.strength;
+    }
+    this.hitbox = new Hitbox(this, 0, 0, this.width, this.height);
+}
+
+MagneticField.prototype.draw = function() {}

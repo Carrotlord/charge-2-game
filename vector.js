@@ -13,6 +13,10 @@ Vector.prototype.setMagnitude = function(newMagnitude) {
     this.yComponent = newMagnitude * Math.sin(theta);
 }
 
+Vector.prototype.getMagnitude = function() {
+    return Math.sqrt(this.xComponent * this.xComponent + this.yComponent * this.yComponent);
+}
+
 function convertPointsToVector(x, y, x2, y2) {
     return new Vector(x2 - x, y2 - y);
 }

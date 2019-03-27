@@ -350,18 +350,32 @@ function applyCoulombsLaw() {
 
 function applyFields() {
     pairwiseAction(function(currentEntity, otherEntity) {
-        if (currentEntity.type === ":field" && !isUnaffectedByCharge(otherEntity) &&
+        if (!isUnaffectedByCharge(otherEntity) &&
             currentEntity.hitbox.intersect(otherEntity.hitbox) !== null) {
-            var forceMagnitude = otherEntity.charge * currentEntity.strength;
-            // Since fields with an angle of 0 point upwards, and
-            // vectors with an angle of 0 point right, we need to subtract
-            // pi/2 from the rotation angle of the field.
-            var accelVector = convertMagnitudeAngleToVector(
-                forceMagnitude / otherEntity.mass,
-                currentEntity.rotationAngle - Math.PI / 2
-            );
-            otherEntity.xAccelerate(accelVector.xComponent);
-            otherEntity.yAccelerate(accelVector.yComponent);
+            // Apply Lorentz force
+            if (currentEntity.type === ":field") {
+                var forceMagnitude = otherEntity.charge * currentEntity.strength;
+                // Since electric fields with an angle of 0 point upwards, and
+                // vectors with an angle of 0 point right, we need to subtract
+                // pi/2 from the rotation angle of the field.
+                var accelVector = convertMagnitudeAngleToVector(
+                    forceMagnitude / otherEntity.mass,
+                    currentEntity.rotationAngle - Math.PI / 2
+                );
+                otherEntity.xAccelerate(accelVector.xComponent);
+                otherEntity.yAccelerate(accelVector.yComponent);
+            } else if (currentEntity.type === ":magnetic_field") {
+                var velocityVector = new Vector(otherEntity.xVel, otherEntity.yVel);
+                var forceAngle = velocityVector.getAngle() + Math.PI / 2;
+                var forceMagnitude = velocityVector.getMagnitude() *
+                                     currentEntity.strength * otherEntity.charge;
+                var accelVector = convertMagnitudeAngleToVector(
+                    forceMagnitude / otherEntity.mass,
+                    forceAngle
+                );
+                otherEntity.xAccelerate(accelVector.xComponent);
+                otherEntity.yAccelerate(accelVector.yComponent);
+            }
         }
     });
 }
@@ -416,6 +430,9 @@ function loadLevel(levelNumber) {
     g.intersections = [];
     g.messageBoxes = [];
     switch (levelNumber) {
+        case -1:
+            loadDebugRoom2();
+            break;
         case 0:
             loadDebugRoom();
             break;

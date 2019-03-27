@@ -44,6 +44,18 @@ function loadDebugRoom() {
     spawnDoorSwitch(180, SCREEN_HEIGHT - 102, 50, 4, door0);
 }
 
+function loadDebugRoom2() {
+    g.entities.push(new Field(400, SCREEN_HEIGHT - 220, 150, 200, 0));
+    g.entities.push(new Field(550, SCREEN_HEIGHT - 220, 150, 200, Math.PI / 3, 0.05));
+    g.entities.push(new MagneticField(100, SCREEN_HEIGHT - 220, 150, 200, ":into_screen"));
+    g.entities.push(new MagneticField(250, SCREEN_HEIGHT - 220, 150, 200, ":out_of_screen"));
+    spawnPlayer(200, 170);
+    g.player.positiveWeights = 100;
+    g.player.negativeWeights = 100;
+    g.player.neutralWeights = 100;
+    createRoomBorders();
+}
+
 function loadLevel1() {
     DEBUG_MODE = false;
     var wallWidth = 20;
