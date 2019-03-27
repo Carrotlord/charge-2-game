@@ -112,6 +112,42 @@ function drawCircle(x, y, radius) {
     g.context.fill();
 }
 
+function drawEmptyCircle(x, y, radius) {
+    g.context.beginPath();
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 2;
+    g.context.arc(x, y, radius, 0, 2 * Math.PI);
+    g.context.stroke();
+}
+
+function drawDotCircle(x, y) {
+    drawEmptyCircle(x, y, 8);
+    drawEmptyCircle(x, y, 1);
+}
+
+function drawCrossCircle(x, y) {
+    var size = 6;
+    g.context.strokeStyle = "black";
+    g.context.lineWidth = 2;
+    g.context.beginPath();
+    g.context.moveTo(x + size, y - size);
+    g.context.lineTo(x - size, y + size);
+    g.context.stroke();
+    g.context.beginPath();
+    g.context.moveTo(x - size, y - size);
+    g.context.lineTo(x + size, y + size);
+    g.context.stroke();
+    drawEmptyCircle(x, y, 8);
+}
+
+function drawTiling(x, y, xOffset, yOffset, xSpacing, ySpacing, maxX, maxY, drawTile) {
+    for (var currentX = x + xOffset; currentX < maxX; currentX += xSpacing) {
+        for (var currentY = y + yOffset; currentY < maxY; currentY += ySpacing) {
+            drawTile(currentX, currentY);
+        }
+    }
+}
+
 function drawGenericRect(x, y, width, height, strokeColor, strokeWidth, fillColor) {
     g.context.strokeStyle = strokeColor;
     g.context.lineWidth = strokeWidth;
@@ -519,6 +555,10 @@ function testMessageBox(text) {
             drawMessageBox(200, 250, 14, 12, text);
         }
     });
+}
+
+function testDrawFunction(drawFunction) {
+    g.messageBoxes.push({draw: drawFunction});
 }
 
 function setup() {
