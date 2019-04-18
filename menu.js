@@ -15,7 +15,7 @@ function MainMenu() {
     var helperPadding = 20;
     this.helperY = this.titleY + this.titleBlock.height + helperPadding;
     this.menuContentBlock = new TextBlock(16, 15,
-        "Start New Game\nLevel Select\nDebug Rooms\nQuit"
+        "Start New Game\nLevel Select\nLevel Editor\nDebug Rooms\nQuit"
     );
     var centeredMenuContent = alignToCenter(
         this.menuContentBlock.width,
@@ -65,9 +65,12 @@ MainMenu.prototype.submit = function() {
             loadLevel(1);
             break;
         case 2:
-            loadLevel(0);
+            loadEditor();
             break;
         case 3:
+            loadLevel(0);
+            break;
+        case 4:
             g.messageBoxes = [{
                 draw: function() {
                     drawCenteredMessageBox(14, 12, "Thanks for playing!");

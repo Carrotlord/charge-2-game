@@ -14,3 +14,9 @@ h1 {
     border: 1px solid black;
     display: block;
 }
+
+#source-output {
+    font-family: monospace;
+    color: white;
+    margin-left: 20px;
+}

@@ -11,3 +11,7 @@ function Wall(x, y, width, height) {
 Wall.prototype.draw = function() {
     drawRect(this.x, this.y, this.width, this.height);
 }
+
+Wall.prototype.toSource = function() {
+    return "g.entities.push(new Wall(" + this.x + ", " + this.y + ", " + this.width + ", " + this.height + "));";
+}

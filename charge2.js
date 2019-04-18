@@ -1,9 +1,12 @@
 var g = {
     context: null,
+    canvas: null,
+    editor: null,
     player: null,
     mainMenu: null,
     currentLevel: null,
     entities: [],
+    inactiveEntities: [],
     intersections: [],
     messageBoxes: [],
     pressedKeys: {}
@@ -99,6 +102,21 @@ function keyCurrentlyDownAction(keyCode) {
                 g.player.walkRight();
                 break;
         }
+    }
+}
+
+function correctMouseCoordinates(oldX, oldY) {
+    var canvasRect = g.canvas.getBoundingClientRect();
+    return {
+        x: oldX - canvasRect.left,
+        y: oldY - canvasRect.top
+    };
+}
+
+function registerMouseDown(event) {
+    if (g.editor !== null) {
+        var coords = correctMouseCoordinates(event.clientX, event.clientY);
+        g.editor.receiveMousePosition(coords.x, coords.y);
     }
 }
 
@@ -449,6 +467,9 @@ function draw() {
     for (var i = 0; i < g.messageBoxes.length; i++) {
         g.messageBoxes[i].draw();
     }
+    for (var i = 0; i < g.inactiveEntities.length; i++) {
+        g.inactiveEntities[i].draw();
+    }
     // All hitboxes should be drawn after entities are finished drawing
     if (DEBUG_MODE) {
         for (var i = 0; i < g.entities.length; i++) {
@@ -565,11 +586,13 @@ function setup() {
     var canvas = document.getElementById("screen");
     canvas.height = SCREEN_HEIGHT;
     canvas.width = SCREEN_WIDTH;
+    g.canvas = canvas;
     g.context = canvas.getContext("2d");
     // Context must exist before instantiating main menu
     g.mainMenu = new MainMenu();
     g.messageBoxes.push(g.mainMenu);
     window.addEventListener("keydown", registerKeyDown);
     window.addEventListener("keyup", registerKeyUp);
+    g.canvas.addEventListener("mousedown", registerMouseDown);
     draw();
 }

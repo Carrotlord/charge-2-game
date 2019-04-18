@@ -109,3 +109,11 @@ function endGame() {
         }
     }];
 }
+
+function loadEditor() {
+    g.entities = [];
+    g.intersections = [];
+    g.messageBoxes = [];
+    g.inactiveEntities = [];
+    g.editor = new Editor();
+}
